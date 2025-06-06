@@ -28,8 +28,8 @@ def transform_2d(matrix, tipo, *params):
                       [0, 0, 1]])
     elif tipo == 'rotation':
         ang = np.radians(params[0])
-        t = np.array([[np.round(np.cos(ang)), np.round(-np.sin(ang)), 0],
-                      [np.round(np.sin(ang)), np.round(np.cos(ang)), 0],
+        t = np.array([[np.cos(ang), -np.sin(ang), 0],
+                      [np.sin(ang), np.cos(ang), 0],
                       [0, 0, 1]])
     elif tipo == 'viewport':
         sru = params[0]
