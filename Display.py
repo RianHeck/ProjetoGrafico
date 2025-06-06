@@ -190,8 +190,8 @@ def main():
                                     match opcao_selecionada:
                                         case 'Escala':
                                             if opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'] and opcoes_transformacoes[opcao_selecionada]['Sy']['Valor']:
-                                                sx = int(opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'])
-                                                sy = int(opcoes_transformacoes[opcao_selecionada]['Sy']['Valor'])
+                                                sx = float(opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'])
+                                                sy = float(opcoes_transformacoes[opcao_selecionada]['Sy']['Valor'])
                                                 display_file[mesh_selecionada].transformacoes.append(('scale', sx, sy))
                                     opcao_selecionada = None
                                     caixa_selecionada = None
@@ -221,13 +221,12 @@ def main():
                             stringatual = opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor']
                             opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] = stringatual[:-1]
                     if caixa_selecionada in ['X', 'Y', 'Raio', 'Dx', 'Dy', 'Sx', 'Sy', 'Shx', 'Shy', 'Angulo']:
-                        if event.unicode.isdigit():
-                            if opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] is None:
-                                opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] = event.unicode
-                            else:
-                                if len(opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor']) < 10:
-                                    stringatual = opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor']
-                                    opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] = stringatual + event.unicode
+                        valor_atual = opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] or ''
+                        if (event.unicode.isdigit() or
+                            (event.unicode == '.' and '.' not in valor_atual) or
+                            (event.unicode == '-' and valor_atual == '')):
+                            if len(valor_atual) < 10:
+                                opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] = valor_atual + event.unicode
                     if caixa_selecionada == 'Eixo':
                         if event.unicode.lower() in ['x', 'y']:
                             opcoes_transformacoes[opcao_selecionada][caixa_selecionada]['Valor'] = event.unicode.lower()
