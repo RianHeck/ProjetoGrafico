@@ -53,10 +53,6 @@ def desenhar_viewport(tela):
     for d in display_file:
         for f in d.mesh.faces:
             arestas = d.mesh.arestasDeUmaFace(f)
-            #pq tá uma lista de listas?
-            if len(arestas) != 1:
-                raise ValueError("A face deve ter exatamente uma lista de arestas.")
-            arestas = arestas[0]
             for aresta in arestas:
                 #aplicar transformação
                 matriz = gerar_matriz_composta(d.transformacoes)
@@ -134,6 +130,8 @@ def criar_forma(nome):
 
 def centro_mesh(display_item):
     """Calcula o centro atual da mesh sem considerar a transformacao de viewport."""
+    if not display_item.mesh.vertices:
+        return 0, 0
     vertices = [
         [v.posicao[0], v.posicao[1], 1] for v in display_item.mesh.vertices
     ]
@@ -167,8 +165,8 @@ def main():
     #file.transformacoes.append(('translation', 1, 1))
     display_file.append(file)
     
-    #file2 = File(Mesh())
-    #display_file.append(file2)
+    file2 = File(Mesh())
+    display_file.append(file2)
     
     running = True
     while running:
@@ -251,10 +249,11 @@ def main():
                                                     ('rotation', ang),
                                                     ('translation', -cx, -cy)
                                                 ])
-                                    opcao_selecionada = None
-                                    caixa_selecionada = None
-                                    mesh_selecionada = None
-                                    modo = None
+                                    #Mais Cliques Mais Trabalho
+                                    #opcao_selecionada = None
+                                    #caixa_selecionada = None
+                                    #mesh_selecionada = None
+                                    #modo = None
                             elif modo == 'Cancelar':
                                 opcao_selecionada = None
                                 caixa_selecionada = None
