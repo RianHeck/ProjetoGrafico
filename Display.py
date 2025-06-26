@@ -214,7 +214,9 @@ def main():
                                                 opcoes_transformacoes[opcao_selecionada]['Sy']['Valor']):
                                                 sx = float(opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'])
                                                 sy = float(opcoes_transformacoes[opcao_selecionada]['Sy']['Valor'])
+                                                #ERRO Ainda Não Entedi Pq Mas É Assim
                                                 cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                cx, cy = display_file[mesh_selecionada].centro_original
                                                 display_file[mesh_selecionada].transformacoes.extend([
                                                     ('translation', cx, cy),
                                                     ('scale', sx, sy),
@@ -223,7 +225,9 @@ def main():
                                         case 'Reflexão':
                                             if opcoes_transformacoes[opcao_selecionada]['Eixo']['Valor']:
                                                 eixo = opcoes_transformacoes[opcao_selecionada]['Eixo']['Valor']
+                                                #ERRO Ainda Não Entedi Pq Mas É Assim
                                                 cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                cx, cy = display_file[mesh_selecionada].centro_original
                                                 display_file[mesh_selecionada].transformacoes.extend([
                                                     ('translation', cx, cy),
                                                     ('reflection', eixo),
@@ -234,7 +238,9 @@ def main():
                                                 opcoes_transformacoes[opcao_selecionada]['Shy']['Valor']):
                                                 shx = float(opcoes_transformacoes[opcao_selecionada]['Shx']['Valor'])
                                                 shy = float(opcoes_transformacoes[opcao_selecionada]['Shy']['Valor'])
+                                                #ERRO Ainda Não Entedi Pq Mas É Assim
                                                 cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                cx, cy = display_file[mesh_selecionada].centro_original
                                                 display_file[mesh_selecionada].transformacoes.extend([
                                                     ('translation', cx, cy),
                                                     ('shearing', shx, shy),
@@ -243,7 +249,9 @@ def main():
                                         case 'Rotação':
                                             if opcoes_transformacoes[opcao_selecionada]['Angulo']['Valor']:
                                                 ang = float(opcoes_transformacoes[opcao_selecionada]['Angulo']['Valor'])
+                                                #ERRO Ainda Não Entedi Pq Mas É Assim
                                                 cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                cx, cy = display_file[mesh_selecionada].centro_original
                                                 display_file[mesh_selecionada].transformacoes.extend([
                                                     ('translation', cx, cy),
                                                     ('rotation', ang),
@@ -268,6 +276,12 @@ def main():
                         if pygame.Rect(310, 30 + 50 * i, 240, 40).collidepoint(mx, my):
                             mesh_selecionada = i               
             elif event.type == pygame.KEYDOWN:
+                if event.key == 99:  # 'c' key
+                    if mesh_selecionada is not None:
+                        print(f'Centro da mesh {mesh_selecionada + 1}: {centro_mesh(display_file[mesh_selecionada])}')
+                if event.key == 116: # 't' key
+                    if mesh_selecionada is not None:
+                        print(f'Transformações da mesh {mesh_selecionada + 1}: {display_file[mesh_selecionada].transformacoes}')
                 if event.key == pygame.K_ESCAPE:
                     opcao_selecionada = None
                     caixa_selecionada = None
