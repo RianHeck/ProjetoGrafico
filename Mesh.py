@@ -229,9 +229,19 @@ class Mesh:
             aresta = aresta.proxima
         return faces
                 
-def main():
+def main(obj_path="Site.obj"):
+    """Load an OBJ file and start the interactive prompt.
+
+    Parameters
+    ----------
+    obj_path : str
+        Relative or absolute path to the OBJ file to load. Defaults to
+        ``"Site.obj"`` which is shipped with this project.
+    """
     mesh = Mesh()
-    mesh.abrirOBJ(r"C:\Users\RianA\Desktop\Computação Gráfica\Atividade3\Cube.obj")
+    # Use the provided path or the default local OBJ file. The previous code
+    # hard coded a Windows specific path which caused issues on other systems.
+    mesh.abrirOBJ(obj_path)
     mesh.printar()
     mesh.cicloExterno()
     print("\n\n\n")
