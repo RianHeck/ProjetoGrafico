@@ -215,7 +215,7 @@ class Mesh:
                 aresta = primeiraAresta
             arestas.append(aresta)
             aresta = aresta.proxima
-        return [arestas]
+        return arestas
     
     def facesDeUmaFace(self, face):
         primeiraAresta = face.aresta

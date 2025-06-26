@@ -53,10 +53,6 @@ def desenhar_viewport(tela):
     for d in display_file:
         for f in d.mesh.faces:
             arestas = d.mesh.arestasDeUmaFace(f)
-            #pq tá uma lista de listas?
-            if len(arestas) != 1:
-                raise ValueError("A face deve ter exatamente uma lista de arestas.")
-            arestas = arestas[0]
             for aresta in arestas:
                 #aplicar transformação
                 matriz = gerar_matriz_composta(d.transformacoes)
@@ -131,6 +127,25 @@ def criar_forma(nome):
     m.arestasDeUmaFace = lambda f: [[type('A', (), {'origem': v}) for v in m.vertices]]
     return m
 
+
+def centro_mesh(display_item):
+    """Calcula o centro atual da mesh sem considerar a transformacao de viewport."""
+    if not display_item.mesh.vertices:
+        return 0, 0
+    vertices = [
+        [v.posicao[0], v.posicao[1], 1] for v in display_item.mesh.vertices
+    ]
+    # Transforma os vertices com as transformacoes aplicadas, exceto viewport
+    transformacoes = [t for t in display_item.transformacoes if t[0] != 'viewport']
+    if transformacoes:
+        matriz = gerar_matriz_composta(transformacoes)
+        pts = aplicar_em_vertices(matriz, np.array(vertices))
+    else:
+        pts = np.array(vertices)
+    cx = float(np.mean(pts[:, 0]))
+    cy = float(np.mean(pts[:, 1]))
+    return cx, cy
+
 def main():
     global display_file
     global opcao_selecionada
@@ -150,8 +165,8 @@ def main():
     #file.transformacoes.append(('translation', 1, 1))
     display_file.append(file)
     
-    #file2 = File(Mesh())
-    #display_file.append(file2)
+    file2 = File(Mesh())
+    display_file.append(file2)
     
     running = True
     while running:
@@ -188,15 +203,57 @@ def main():
                             if nome == 'Confirmar':
                                 if mesh_selecionada is not None and opcao_selecionada:
                                     match opcao_selecionada:
+                                        case 'Translação':
+                                            if (opcoes_transformacoes[opcao_selecionada]['Dx']['Valor'] and
+                                                opcoes_transformacoes[opcao_selecionada]['Dy']['Valor']):
+                                                dx = float(opcoes_transformacoes[opcao_selecionada]['Dx']['Valor'])
+                                                dy = float(opcoes_transformacoes[opcao_selecionada]['Dy']['Valor'])
+                                                display_file[mesh_selecionada].transformacoes.append(('translation', dx, dy))
                                         case 'Escala':
-                                            if opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'] and opcoes_transformacoes[opcao_selecionada]['Sy']['Valor']:
+                                            if (opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'] and
+                                                opcoes_transformacoes[opcao_selecionada]['Sy']['Valor']):
                                                 sx = float(opcoes_transformacoes[opcao_selecionada]['Sx']['Valor'])
                                                 sy = float(opcoes_transformacoes[opcao_selecionada]['Sy']['Valor'])
-                                                display_file[mesh_selecionada].transformacoes.append(('scale', sx, sy))
-                                    opcao_selecionada = None
-                                    caixa_selecionada = None
-                                    mesh_selecionada = None
-                                    modo = None
+                                                cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                display_file[mesh_selecionada].transformacoes.extend([
+                                                    ('translation', cx, cy),
+                                                    ('scale', sx, sy),
+                                                    ('translation', -cx, -cy)
+                                                ])
+                                        case 'Reflexão':
+                                            if opcoes_transformacoes[opcao_selecionada]['Eixo']['Valor']:
+                                                eixo = opcoes_transformacoes[opcao_selecionada]['Eixo']['Valor']
+                                                cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                display_file[mesh_selecionada].transformacoes.extend([
+                                                    ('translation', cx, cy),
+                                                    ('reflection', eixo),
+                                                    ('translation', -cx, -cy)
+                                                ])
+                                        case 'Cisalhamento':
+                                            if (opcoes_transformacoes[opcao_selecionada]['Shx']['Valor'] and
+                                                opcoes_transformacoes[opcao_selecionada]['Shy']['Valor']):
+                                                shx = float(opcoes_transformacoes[opcao_selecionada]['Shx']['Valor'])
+                                                shy = float(opcoes_transformacoes[opcao_selecionada]['Shy']['Valor'])
+                                                cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                display_file[mesh_selecionada].transformacoes.extend([
+                                                    ('translation', cx, cy),
+                                                    ('shearing', shx, shy),
+                                                    ('translation', -cx, -cy)
+                                                ])
+                                        case 'Rotação':
+                                            if opcoes_transformacoes[opcao_selecionada]['Angulo']['Valor']:
+                                                ang = float(opcoes_transformacoes[opcao_selecionada]['Angulo']['Valor'])
+                                                cx, cy = centro_mesh(display_file[mesh_selecionada])
+                                                display_file[mesh_selecionada].transformacoes.extend([
+                                                    ('translation', cx, cy),
+                                                    ('rotation', ang),
+                                                    ('translation', -cx, -cy)
+                                                ])
+                                    #Mais Cliques Mais Trabalho
+                                    #opcao_selecionada = None
+                                    #caixa_selecionada = None
+                                    #mesh_selecionada = None
+                                    #modo = None
                             elif modo == 'Cancelar':
                                 opcao_selecionada = None
                                 caixa_selecionada = None
